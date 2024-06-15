@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Identifier</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        color: #333;
+        background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+        margin: 0;
+        padding: 0;
+      }
+      .navbar-custom {
+        background-color: #343a40;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      }
+      .navbar-custom .navbar-brand,
+      .navbar-custom .nav-link {
+        color: #fff;
+        transition: color 0.3s ease;
+      }
+      .navbar-custom .nav-link:hover {
+        color: #f6d365;
+      }
+      .content-overlay {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 0px;
+      }
+      .typing-text {
+        font-family: "Caveat", cursive;
+        font-size: 2rem;
+        color: #fff;
+        animation: fadeIn 2s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .product-container {
+        background: rgba(0, 0, 0, 0.6);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        max-width: 600px;
+        margin: 20px auto;
+      }
+      .product-container h2 {
+        color: #fff;
+      }
+      .input-group input {
+        border: 1px solid #fda085;
+      }
+      .btn-primary {
+        background: #fda085;
+        border: none;
+      }
+      .btn-primary:hover {
+        background: #f6d365;
+      }
+      .positioned-card {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: left;
+      }
+      .graph-card {
+        
+        display: none; /* Initially hidden */
+      }
+      .footer {
+        background-color: #343a40;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+      .footer h2 {
+        color: #f6d365;
+      }
+      .footer ul {
+        list-style: none;
+        padding: 0;
+      }
+      .footer ul li {
+        margin: 5px 0;
+      }
+      .footer ul li a {
+        color: #fda085;
+        text-decoration: none;
+      }
+      .footer ul li a:hover {
+        text-decoration: underline;
+      }
+      .video-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        opacity: 0.7;
+      }
+
+      /* Chatbot Styles */
+      .chatbot-container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+      }
+      .chatbot-header {
+        background: #343a40;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px 5px 0 0;
+      }
+      .chatbot-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      
+      .chatbot-footer {
+        display: flex;
+        border-top: 1px solid #ddd;
+        padding: 10px;
+      }
+      .chatbot-footer input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 5px;
+      }
+      .chatbot-footer button {
+        background: #fda085;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-left: 5px;
+        cursor: pointer;
+      }
+      .chatbot-message {
+        margin: 5px 0;
+      }
+      .user-message {
+        text-align: right;
+      }
+      .bot-message {
+        text-align: left;
+        color: #555;
+      }
+    
+      .table {
+          width: 300px;  /* Adjusted to be smaller */
+          margin: 15px auto;
+          border-collapse: collapse;
+      }
+      .th, td {
+          padding: 5px;
+          text-align: left;
+          border: 1px solid #ddd;
+      }
+      .th {
+          background-color: #f4f4f4;
+      }
+  </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+      <a class="navbar-brand" href="#">
+        <img
+          src="{{ url_for('static', filename='images/logo.png') }}"
+          width="40"
+          height="40"
+          class="d-inline-block align-top"
+          alt="Logo"
+        />
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact Us</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Background Video -->
+    <video autoplay muted loop class="video-background">
+      <source
+        src="{{ url_for('static', filename='images/10389453-uhd_3840_2160_24fps.mp4') }}"
+        type="video/mp4"
+      />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Content Overlay -->
+    <div class="content-overlay">
+      <!-- Typing Text -->
+      <div class="container">
+        <div class="typing-text">Discover the Best Deals Worldwide at SAP</div>
+        <div class="product-container">
+          <h2>Product Specifications</h2>
+          <form id="myForm" onsubmit="identifyProduct(event)">
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                id="productInput"
+                class="form-control"
+                placeholder="Enter your query here"
+                name="product"
+                required
+              />
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Row for Graph, Graph Card, and Chatbot Column -->
+      <!-- Row for Graph, Graph Card, and Chatbot Column -->
+<div class="container" >
+  <div class="row">
+    <div class="col-md-4">
+      <div class="graph-card" id="graph-card">
+        <div style="background: rgba(255, 255, 255, 0.9);">
+          <img id="price-bar-graph" src="/price-bar-graph" class="img-fluid" alt="Price Bar Graph" />
+        </div>
+        <div><br></div>
+        <div style="background: rgba(255, 255, 255, 0.9);">
+          <iframe src="/price-map" width="100%" height="600px" style="border: 0"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="positioned-card">
+        <p>Get the best deals on your favorite products now!</p>
+        <div id="result"></div><br>
+        <div id="category"></div>
+        <div id="recommendation"></div>
+        <div id="product_link"></div>
+        <div id="delivery"></div>
+        <div id="vendor_details" ></div>
+
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div>
+        <h2 style="text-align: center;">Country Price Change Table</h2>
+        <table>
+          {{ html_table_with_colors | safe }}
+        </table>
+      </div>
+      <div class="chatbot-container">
+        <div class="chatbot-header">Chatbot</div>
+        <div class="chatbot-body" id="chatbot-body"></div>
+        <div class="chatbot-footer">
+          <input type="text" id="chatbot-input" placeholder="Type your message..." />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <h2>SAP's Footer</h2>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+      <p>&copy; 2024 SAP. All rights reserved.</p>
+    </footer>
+
+    <!-- Chatbot Script -->
+    <script>
+      function sendMessage() {
+  const input = document.getElementById("chatbot-input");
+  const message = input.value;
+
+  if (message.trim() !== "") {
+    fetch('/send-message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+      const chatbotBody = document.getElementById("chatbot-body");
+
+      // Add user message to the chat
+      const userMessageElement = document.createElement("div");
+      userMessageElement.classList.add("chatbot-message", "user-message");
+      userMessageElement.textContent = message;
+      chatbotBody.appendChild(userMessageElement);
+
+      // Add bot response to the chat
+      const botMessageElement = document.createElement("div");
+      botMessageElement.classList.add("chatbot-message", "bot-message");
+      botMessageElement.textContent = data.bot_response;
+      chatbotBody.appendChild(botMessageElement);
+
+      // Scroll to the bottom of the chat
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+      // Clear input
+      input.value = "";
+    })
+    .catch(error => {
+      console.error('Error sending message:', error);
+    });
+  }
+}
+function identifyProduct(event) {
+  event.preventDefault();
+  const productInput = document.getElementById("productInput").value;
+  console.log("Identifying product:", productInput);
+
+  fetch('/identify-product', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ product: productInput })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Product data received:", data);
+    document.getElementById("result").innerHTML = `
+      <div class="result-text">
+        <strong>Product Name:</strong> ${data.product}
+      </div>
+      <img src="${data.image_url}" alt="Product Image" class="img-fluid">
+    `;
+    // Show the graph card
+    fetchProductData(productInput);
+  })
+  .catch(error => {
+    console.error('Error identifying product:', error);
+  });
+}
+
+function fetchProductData(product) {
+  fetch('/identify-category', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ product })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Category data received:", data);
+    document.getElementById("category").innerHTML = `<div class="result-text"><strong>Category:</strong> ${data.category}</div>`;
+    return data.category;
+  })
+  .then(category => {
+    return fetch('/get-recommendation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ category })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Recommendation data received:", data);
+    document.getElementById("recommendation").innerHTML = `<div class="result-text"><strong>Recommendation:</strong> ${data.recommendation}</div>`;
+    return fetch('/get-product_link', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ product })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Product link data received:", data);
+    document.getElementById("product_link").innerHTML = `<div class="product_link"><strong>Product Link:</strong> <a href="${data.product_link}" target="_blank">Click here to Buy now!!!!</a></div>`;
+    return fetch('/delivery-details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ product })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Delivery data received:", data);
+    document.getElementById("delivery").innerHTML = `<div class="result-text"><strong>Delivery:</strong> ${data.delivery}</div>`;
+    return fetch('/vendor-details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ product })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Vendor details data received:", data);
+    document.getElementById("vendor_details").innerHTML = `<div class="result-text"><strong>Vendor Details:</strong> ${data.vendor_details}</div>`;
+    document.getElementById("graph-card").style.display = "block"; 
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
+}
+  </script>
+  </body>
+</html>
