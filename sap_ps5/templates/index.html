@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Identifier</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+      <a class="navbar-brand" href="#">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" width="40" height="40" class="d-inline-block align-top" alt="Logo">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="bill.html">Bill uploading</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Background Video -->
+    <video autoplay muted loop class="video-background">
+      <source
+        src="{{ url_for('static', filename='images/background2.mp4') }}"
+        type="video/mp4"
+      />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Content Overlay -->
+    <div class="content-overlay">
+      <!-- Typing Text -->
+      <div class="container">
+        <div class="welcome-text">
+    <h1>Welcome, discover the best deals</h1>
+  </div>
+        <div class="product-container">
+          <h2>Product Specifications</h2>
+          <form id="myForm" onsubmit="identifyProduct(event)">
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                id="productInput"
+                class="form-control"
+                placeholder="Enter your query here"
+                name="product"
+                required
+              />
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+<div class="container width" >
+  <div class="row gap-3">
+    <div class="col">
+      <div><strong>FACTS</strong></div>
+          <div id="sliding-facts"></div>
+          <div class="graph-card" id="graph-card" style="display:none;">
+            <div class="graph-content graph-img" style="background: rgba(255, 255, 255, 0.9);">
+              <img id="price-bar-graph" src="/price-bar-graph" class="img-fluid" alt="Price Bar Graph" />
+            </div>
+            <div><br></div>
+            <div class="graph-content graph-map" style="background: rgba(255, 255, 255, 0.9);">
+              <iframe id="price-map" src="/price-map" width="100%" height="600px" style="border: 0"></iframe>
+            </div>
+
+          </div>
+          <div id="facts-container">
+            
+          </div>
+        </div>
+    
+    <!-- Modal for enlarging graph/map -->
+    <div id="modal" class="modal">
+      <span class="close">&times;</span>
+      <div class="modal-content">
+        <img id="modal-img" class="img-fluid" style="display: none;" />
+        <iframe id="modal-iframe" style="display: none; width: 100%; height: 100%; border: 0;"></iframe>
+      </div></div>
+
+      
+
+    <div class="col">
+      <div class="positioned-card">
+        <p>Get the best deals on your favorite products now!</p>
+        <div id="result">
+          <i class="fa-solid fa-phone" style="position: absolute; top: 10px; right: 10px;"></i>
+        </div>
+        <div id="category">
+          <i class="fa-solid fa-list" style="position: absolute; top: 10px; right: 10px;"></i>
+        </div>
+        <div id="recommendation">
+          <i class="fa-solid fa-check" style="position: absolute; top: 10px; right: 10px;"></i>
+        </div>
+        <div id="product_link">
+          <i class="fa-solid fa-link" style="position: absolute; top: 10px; right: 10px;"></i>
+        </div>
+        <div id="delivery">
+          <i class="fa-solid fa-truck" style="position: absolute; top: 10px; right: 10px;"></i>
+        </div>
+        <div id="vendor_details">
+          <i class="fa-solid fa-trademark" style="position: absolute; top: 10px; right: 10px;"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col" >
+      <div class="chatbot-container">
+        <div class="chatbot-header">Chat Assistant
+        </div>
+        <div class="chatbot-body" id="chatbot-body"></div>
+        <div class="chatbot-footer">
+          <input type="text" id="chatbot-input" placeholder="Type your message..." />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+      <div style="background: rgba(240, 245, 245, 0.8);">
+        <table>
+         <br> {{ html_table_with_colors | safe }}
+        </table>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <h2>SAP's Footer</h2>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+      <p>&copy; 2024 SAP. All rights reserved.</p>
+    </footer>
+
+    <!-- Chatbot Script -->
+    <script>
+      function sendMessage() {
+  const input = document.getElementById("chatbot-input");
+  const message = input.value;
+
+  if (message.trim() !== "") {
+    fetch('/send-message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+      const chatbotBody = document.getElementById("chatbot-body");
+
+      // Add user message to the chat
+      const userMessageElement = document.createElement("div");
+      userMessageElement.classList.add("chatbot-message", "user-message");
+      userMessageElement.textContent = message;
+      chatbotBody.appendChild(userMessageElement);
+
+      // Add bot response to the chat
+      const botMessageElement = document.createElement("div");
+      botMessageElement.classList.add("chatbot-message", "bot-message");
+      botMessageElement.textContent = data.bot_response;
+      chatbotBody.appendChild(botMessageElement);
+
+      // Scroll to the bottom of the chat
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+      // Clear input
+      input.value = "";
+    })
+    .catch(error => {
+      console.error('Error sending message:', error);
+    });
+  }
+}
+function identifyProduct(event) {
+  event.preventDefault();
+  const productInput = document.getElementById("productInput").value;
+  console.log("Identifying product:", productInput);
+
+  fetch('/identify-product', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ product: productInput })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Product data received:", data);
+    typeEffect('result', data.product);
+    document.getElementById("result").innerHTML = `
+      <div class="result-container">
+        <div class="result-text">
+          <strong>Product Name:</strong> 
+        </div>
+        <img src="${data.image_url}" alt="Product Image" class="img-fluid"><br>
+        <i class="fa-solid fa-phone result-icon"></i>
+      </div>
+    `;
+
+    const facts = [
+    "Did you know the cost of iPhone 15 Plus in USA is $899 (approx. ₹74,495)",
+    "The highest currency in the world is none other than Kuwaiti Dinar or KWD",
+    "The Iranian Rial is considered the world's lowest currency due to factors such as economic sanctions limiting Iran's petroleum exports",
+    "Iphone 15 pro plus max cost around ₹134,900.00 in India whereas it only cost rs 100542 in Singapore",
+    "The U.S. dollar is the most traded currency in the world, with trillions exchanged daily",
+    "Japan's Yen is the third most traded currency in the foreign exchange market",
+    "The European Union's Euro is the second most traded currency in the world",
+    "Cryptocurrencies like Bitcoin have become popular investment options in recent years",
+    "The Indian Rupee is the official currency of India, issued by the Reserve Bank of India",
+    "The British Pound is one of the oldest currencies still in use and was once the world's dominant currency"
+  ];
+
+  let factIndex = 0;
+
+  function showNextFact() {
+    const factContainer = document.getElementById("fact");
+    factContainer.textContent = facts[factIndex];
+    factIndex = (factIndex + 1) % facts.length;
+  }
+
+  function startFactSliding() {
+    showNextFact();
+    setInterval(showNextFact, 5000); // Change fact every 5 seconds
+  }
+
+  document.addEventListener("DOMContentLoaded", startFactSliding);
+
+    fetchProductData(productInput);
+  })
+  .catch(error => {
+    console.error('Error identifying product:', error);
+  });
+}
+document.addEventListener('DOMContentLoaded', function () {
+    const facts = [
+        "Did you know the cost of iPhone 15 Plus in USA is $899 (approx. ₹74,495)",
+    "The highest currency in the world is none other than Kuwaiti Dinar or KWD",
+    "The Iranian Rial is considered the world's lowest currency due to factors such as economic sanctions limiting Iran's petroleum exports",
+    "Iphone 15 pro plus max cost around ₹134,900.00 in India whereas it only cost rs 100542 in Singapore",
+    "The U.S. dollar is the most traded currency in the world, with trillions exchanged daily",
+    "Japan's Yen is the third most traded currency in the foreign exchange market",
+    "The European Union's Euro is the second most traded currency in the world",
+    "Cryptocurrencies like Bitcoin have become popular investment options in recent years",
+    "The Indian Rupee is the official currency of India, issued by the Reserve Bank of India",
+    "The British Pound is one of the oldest currencies still in use and was once the world's dominant currency"
+    ];
+
+    let factIndex = 0;
+    const factContainer = document.getElementById('sliding-facts');
+
+    function showNextFact() {
+        // Remove the sliding class to reset the animation
+        factContainer.classList.remove('sliding');
+
+        // Update the fact content
+        factContainer.textContent = facts[factIndex];
+        factIndex = (factIndex + 1) % facts.length;
+
+        // Trigger reflow to restart the animation
+        void factContainer.offsetWidth;
+
+        // Add the sliding class to start the animation
+        factContainer.classList.add('sliding');
+    }
+
+    showNextFact();
+    setInterval(showNextFact, 10000); // Change fact every 5 seconds
+});
+
+function fetchProductData(product) {
+  fetch('/identify-category', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ product })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Category data received:", data);
+    typeEffect("category", data.category);
+    document.getElementById("category").innerHTML = `
+      <div class="result-container">
+        <div class="result-text"><strong>Product Category:</strong> </div>
+        <i class="fa-solid fa-list result-icon"></i>
+      </div>
+    `;
+    return data.category;
+  })
+  .then(category => {
+    return fetch('/get-recommendation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ category })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Recommendation data received:", data);
+    document.getElementById("recommendation").innerHTML = `
+      <div class="result-container">
+        <div class="result-text"><strong>Recommendation:</strong>${data.recommendation} </div>
+        <i class="fa-solid fa-tick result-icon"></i>
+      </div>
+    `;
+    return fetch('/get-product_link', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ product })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Product link data received:", data);
+    document.getElementById("product_link").innerHTML = `
+      <div class="result-container">
+      <a href="${data.product_link}" target="_blank" class="buy-now-button"><strong style:"background-color: (0,0,0);">Product Link:</strong>Buy Now</a>
+      <i class="fa-solid fa-link result-icon"></i>
+    </div>
+    `;
+    return fetch('/delivery-details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ product })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Delivery data received:", data);
+    typeEffect("delivery", data.delivery);
+    document.getElementById("delivery").innerHTML = `
+      <div class="result-container">
+        <div class="result-text"><strong>Delivery details:</strong> </div>
+        <i class="fa-solid fa-truck result-icon"></i>
+      </div>
+    `;
+    return fetch('/vendor-details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ product })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Vendor details data received:", data);
+    typeEffect("vendor_details", data.vendor_details);
+    document.getElementById("vendor_details").innerHTML = `
+      <div class="result-container">
+        <div class="result-text"><strong>Vendor details:</strong> ${data.vendor_details}</div>
+        <i class="fa-solid fa-trademark result-icon"></i>
+      </div>
+    `;
+    document.getElementById("graph-card").style.display = "block";
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
+  document.getElementById('price-bar-graph').addEventListener('click', function() {
+    var modal = document.getElementById('modal');
+    var modalImg = document.getElementById('modal-img');
+    var modalIframe = document.getElementById('modal-iframe');
+    
+    modal.style.display = 'block';
+    modalImg.src = this.src;
+    modalImg.style.display = 'block';
+    modalIframe.style.display = 'none';
+  });
+
+  document.getElementById('price-map').addEventListener('click', function() {
+    var modal = document.getElementById('modal');
+    var modalImg = document.getElementById('modal-img');
+    var modalIframe = document.getElementById('modal-iframe');
+    
+    modal.style.display = 'block';
+    modalIframe.src = this.src;
+    modalIframe.style.display = 'block';
+    modalImg.style.display = 'none';
+  });
+
+  document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('modal').style.display = 'none';
+  });
+
+}
+function typeEffect(elementId, text) {
+  const element = document.getElementById(elementId);
+  
+  let index = 0;
+  element.innerHTML = "";
+
+  function type() {
+    if (index < text.length) {
+      element.innerHTML += text.charAt(index);
+      index++;
+      setTimeout(type, 50); // Adjust typing speed here
+    }
+  }
+
+  type();
+}
+
+function typeEffectOnElement(element, text) {
+  let index = 0;
+  element.innerHTML = "";
+
+  function type() {
+    if (index < text.length) {
+      element.innerHTML += text.charAt(index);
+      index++;
+      setTimeout(type, 50); // Adjust typing speed here
+    }
+  }
+
+  type();
+}
+  </script>
+  </body>
+</html>

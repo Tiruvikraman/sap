@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prices in Different Countries</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        .bar {
+            stroke-width: 1;
+        }
+
+        .bar text {
+            fill: black;
+            text-anchor: middle;
+        }
+
+        .axis-label {
+            font-size: 12px;
+        }
+
+        .annotation {
+            font-size: 12px;
+            fill: green;
+        }
+
+        .average-annotation {
+            fill: blue;
+        }
+
+        .data-na {
+            fill: gray;
+        }
+
+        #color-legend {
+            font-size: 12px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-size: 12px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .title {
+            font-size: 18px;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    <div id="tooltip" class="tooltip"></div>
+    <script>
+        const prices = [101679, 102771, 11520700000.0, 83174, 76494, 69043, 68941, 63600, 84790, 95881, 79704];
+        const countries = ['Australia', 'Canada', 'China', 'France', 'Indonesia', 'Japan', 'Singapore', 'Thailand', 'United Kingdom', 'United States', 'India'];
+
+        const margin = { top: 50, right: 100, bottom: 90, left: 60 };
+        const width = 960 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Title
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", -20)
+            .attr("class", "title")
+            .text("Product Cost in Different Countries");
+
+        const realistic_prices = prices.filter(d => d < 1000000000);
+        const maxPrice = d3.max(realistic_prices);
+        const minPrice = d3.min(realistic_prices);
+        const averagePrice = d3.mean(realistic_prices);
+
+        const x = d3.scaleBand()
+            .domain(countries)
+            .range([0, width])
+            .padding(0.1);
+
+        const y = d3.scaleLinear()
+            .domain([0, maxPrice])
+            .nice()
+            .range([height, 0]);
+
+        const color = d3.scaleSequential(d3.interpolateRdYlGn)
+            .domain([maxPrice, minPrice]);
+
+        const tooltip = d3.select("#tooltip");
+
+        svg.append("g")
+            .selectAll(".bar")
+            .data(prices)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", (d, i) => x(countries[i]))
+            .attr("y", d => d < 1000000000 ? y(d) : height)
+            .attr("width", x.bandwidth())
+            .attr("height", d => d < 1000000000 ? height - y(d) : 0)
+            .attr("fill", d => d < 1000000000 ? color(d) : 'gray')
+            .on("mouseover", function(event, d) {
+                const country = countries[prices.indexOf(d)];
+                tooltip.html(`<strong>${country}</strong><br>Price: ${d}`)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px")
+                    .style("opacity", 1);
+            })
+            .on("mouseout", function() {
+                tooltip.style("opacity", 0);
+            });
+
+        svg.append("g")
+            .selectAll(".text")
+            .data(prices)
+            .enter()
+            .append("text")
+            .attr("class", "bar text")
+            .attr("x", (d, i) => x(countries[i]) + x.bandwidth() / 2)
+            .attr("y", d => d < 1000000000 ? y(d) - 5 : height)
+            .attr("text-anchor", "middle")
+            .text(d => d < 1000000000 ? d : "Data NA");
+
+        svg.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("class", "axis-label")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-45)");
+
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // X Axis Label
+        svg.append("text")
+            .attr("class", "axis-label")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 10)
+            .attr("text-anchor", "middle")
+            .text("Countries");
+
+        // Y Axis Label
+        svg.append("text")
+            .attr("class", "axis-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -margin.left + 20)
+            .attr("text-anchor", "middle")
+            .text("Prices of Product");
+
+        // Annotations
+        const minIndex = prices.indexOf(minPrice);
+        const closestToAverageIndex = prices.reduce((prev, curr, idx) =>
+            Math.abs(curr - averagePrice) < Math.abs(prices[prev] - averagePrice) ? idx : prev, 0);
+
+        svg.append("text")
+            .attr("x", x(countries[minIndex]) + x.bandwidth() / 2)
+            .attr("y", y(minPrice) - 30)
+            .attr("class", "annotation")
+            .text("Best Deal")
+            .attr("text-anchor", "middle");
+
+        svg.append("line")
+            .attr("x1", x(countries[minIndex]) + x.bandwidth() / 2)
+            .attr("y1", y(minPrice) - 25)
+            .attr("x2", x(countries[minIndex]) + x.bandwidth() / 2)
+            .attr("y2", y(minPrice) - 5)
+            .attr("stroke", "green")
+            .attr("stroke-width", 2)
+            .attr("marker-end", "url(#arrow)");
+
+        svg.append("text")
+            .attr("x", x(countries[closestToAverageIndex]) + x.bandwidth() / 2)
+            .attr("y", y(prices[closestToAverageIndex]) - 30)
+            .attr("class", "annotation average-annotation")
+            .text("Average Price")
+            .attr("text-anchor", "middle");
+
+        svg.append("line")
+            .attr("x1", x(countries[closestToAverageIndex]) + x.bandwidth() / 2)
+            .attr("y1", y(prices[closestToAverageIndex]) - 25)
+            .attr("x2", x(countries[closestToAverageIndex]) + x.bandwidth() / 2)
+            .attr("y2", y(prices[closestToAverageIndex]) - 5)
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .attr("marker-end", "url(#arrow)");
+
+        svg.append("defs").append("marker")
+            .attr("id", "arrow")
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 5)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M 0 0 L 5 10 L 10 0 Z")
+            .attr("fill", "black");
+
+        // Color legend
+        const legendHeight = 300;
+        const legendWidth = 20;
+
+        const legendSvg = d3.select("#chart").append("svg")
+            .attr("width", legendWidth + margin.right)
+            .attr("height", legendHeight + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${width + margin.left + 20},${margin.top})`);
+
+        const legend = legendSvg.append("defs")
+            .append("svg:linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
+
+        legend.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", d3.interpolateRdYlGn(0))
+            .attr("stop-opacity", 1);
+
+        legend.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", d3.interpolateRdYlGn(1))
+            .attr("stop-opacity", 1);
+
+        legendSvg.append("rect")
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .style("fill", "url(#gradient)");
+
+        const legendScale = d3.scaleLinear()
+            .domain([maxPrice, minPrice])
+            .range([0, legendHeight]);
+
+        legendSvg.append("g")
+            .attr("transform", `translate(${legendWidth}, 0)`)
+            .call(d3.axisRight(legendScale).ticks(5));
+
+        legendSvg.append("text")
+            .attr("x", legendWidth / 2)
+            .attr("y", -10)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "12px")
+            .text("Price");
+
+        legendSvg.append("text")
+            .attr("x", legendWidth / 2)
+            .attr("y", legendHeight + 20)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "12px")
+            .text("High");
+
+        legendSvg.append("text")
+            .attr("x", legendWidth / 2)
+            .attr("y", 0)
+            .attr("text-anchor", "middle")
+            .attr("dy", "-.75em")
+            .text("High");
+
+        legendSvg.append("text")
+            .attr("x", legendWidth / 2)
+            .attr("y", legendHeight)
+            .attr("text-anchor", "middle")
+            .attr("dy", "1.25em")
+            .text("Low");
+    </script>
+</body>
+</html>
