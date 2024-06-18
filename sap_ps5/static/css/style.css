@@ -1,0 +1,364 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.navbar-custom {
+  background-color: rgb(18, 18, 18);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.nav-link {
+  color: blue;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#bg-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+}
+
+.video-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-start; /* Align to the top */
+  justify-content: center;
+  flex-direction: column;
+  padding-top: 20px; /* Add some padding from the top */
+}
+
+.typing-text {
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: "serif";
+  font-size: 40px;
+  color: white;
+  animation: animated-text 1.5s steps(30, end);
+  align-self: flex-start; /* Center the text */
+}
+
+.main-content {
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+  padding: 20px;
+  width: 100%;
+}
+
+.product-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.product-container h2 {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.input-group input,
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: wheat;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  background-color: orange;
+}
+
+@keyframes animated-text {
+  from {
+    width: 0px;
+  }
+  to {
+    width: 472px;
+  }
+}
+
+.results-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white;
+  margin-bottom: 20px;
+}
+
+.price-chart-container,
+.link-image-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white;
+  margin-top: 20px;
+}
+
+.footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  background-color: rgb(18, 18, 18);
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  z-index: 1;
+  margin-top: 200px;
+}
+
+.footer h2 {
+  margin: 10px 0 20px;
+}
+
+.footer p,
+.footer ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer li {
+  margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+  .typing-text {
+    font-size: 20px;
+  }
+
+  .input-group {
+    flex-direction: column;
+  }
+
+  .input-group input,
+  .input-group button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .link-image-container,
+  .price-chart-container {
+    margin-bottom: 0px;
+  }
+}
+body {
+  font-family: "Roboto", sans-serif;
+  color: #333;
+  background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+  margin: 0;
+  padding: 0;
+}
+.navbar-custom {
+  background-color: #343a40;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+  color: #fff;
+  transition: color 0.3s ease;
+}
+.navbar-custom .nav-link:hover {
+  color: #f6d365;
+}
+.content-overlay {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 0px;
+}
+.typing-text {
+  font-family: "Caveat", cursive;
+  font-size: 2rem;
+  color: #fff;
+  animation: fadeIn 2s ease-in-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.product-container {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  margin: 20px auto;
+}
+.product-container h2 {
+  color: #fff;
+}
+.input-group input {
+  border: 1px solid #fda085;
+}
+.btn-primary {
+  background: #fda085;
+  border: none;
+}
+.btn-primary:hover {
+  background: #f6d365;
+}
+.positioned-card {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+.graph-card {
+  
+  display: none; 
+}
+.footer {
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+.footer h2 {
+  color: #f6d365;
+}
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+.footer ul li {
+  margin: 5px 0;
+}
+.footer ul li a {
+  color: #fda085;
+  text-decoration: none;
+}
+.footer ul li a:hover {
+  text-decoration: underline;
+}
+.video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+/* Chatbot Styles */
+.chatbot-container {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+}
+.chatbot-header {
+  background: #343a40;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px 5px 0 0;
+}
+.chatbot-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.chatbot-footer {
+  display: flex;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+}
+.chatbot-footer input {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 5px;
+}
+.chatbot-footer button {
+  background: #fda085;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+.chatbot-message {
+  margin: 5px 0;
+}
+.user-message {
+  text-align: right;
+}
+.bot-message {
+  text-align: left;
+  color: #555;
+}
+
+.table {
+    width: 300px;  /* Adjusted to be smaller */
+    margin: 15px auto;
+    border-collapse: collapse;
+}
+.th, td {
+    padding: 5px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+.th {
+    background-color: #f4f4f4;
+}
